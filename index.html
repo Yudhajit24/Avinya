@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Waste-to-Energy Simulator</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --background-color: #ecf0f1;
+            --text-color: #333;
+        }
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        h1, h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 2.5em;
+            text-align: center;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+        }
+        .input-section, .output-section {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        input[type="range"] {
+            flex-grow: 1;
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #d7dcdf;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            transition: background .15s ease-in-out;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: var(--secondary-color);
+        }
+        .meter {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .meter-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--accent-color);
+            transition: width 0.5s ease-in-out;
+        }
+        .output-value {
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        #energySummary {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+        .footnote {
+            font-size: 0.9em;
+            color: #777;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Waste-to-Energy Simulator</h1>
+        <div class="input-section">
+            <h2>Organic Waste Input</h2>
+            <div class="slider-container">
+                <input type="range" id="wasteInput" min="0" max="1000" value="500" oninput="updateSimulation(this.value)">
+                <span id="wasteValue">500</span> kg
+            </div>
+            <div class="meter">
+                <div id="wasteFill" class="meter-fill"></div>
+            </div>
+        </div>
+        <div class="output-section">
+            <h2>Energy Output</h2>
+            <p>Biogas Produced: <span id="biogasOutput" class="output-value">0</span> m³</p>
+            <p>Energy Generated: <span id="energyOutput" class="output-value">0</span> kWh</p>
+            <div class="meter">
+                <div id="energyFill" class="meter-fill"></div>
+            </div>
+            <p>Fertilizer Produced: <span id="fertilizerOutput" class="output-value">0</span> kg</p>
+        </div>
+        <div id="energySummary"></div>
+        <p class="footnote">This simulator provides estimated results based on average conversion rates. Actual results may vary depending on waste composition and processing efficiency.</p>
+    </div>
+
+    <script>
+        function updateSimulation(waste) {
+            waste = Number(waste);
+            const biogasProduction = waste * 0.1;
+            const energyOutput = biogasProduction * 6;
+            const fertilizer = waste * 0.3;
+            const days = energyOutput / 30;
+
+            document.getElementById('wasteValue').textContent = waste;
+            document.getElementById('biogasOutput').textContent = biogasProduction.toFixed(2);
+            document.getElementById('energyOutput').textContent = energyOutput.toFixed(2);
+            document.getElementById('fertilizerOutput').textContent = fertilizer.toFixed(2);
+
+            document.getElementById('wasteFill').style.width = (waste / 10) + '%';
+            document.getElementById('energyFill').style.width = (energyOutput / 60) + '%';
+
+            document.getElementById('energySummary').innerHTML = `
+                This waste-to-energy process could power an average home for approximately 
+                <strong>${days.toFixed(1)} days</strong>, while producing 
+                <strong>${fertilizer.toFixed(2)} kg</strong> of fertilizer.
+            `;
+        }
+
+        // Initialize with default value
+        updateSimulation(500);
+    </script>
+</body>
+</html>
